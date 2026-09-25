@@ -137,8 +137,10 @@ function challengeLandmark(id,initial,L,points){
  return {...best,challenge:{margin,uncertaintyPx:Math.max(.25,varr),candidateCount:coarse.length+fine.length,rejected},rationale:`Selected because the candidate maximized landmark-specific anatomical/geometric evidence: ${reasons.join(', ')}. Competing nearby candidates were lower scoring under the same landmark definition and regional constraints.` ,trace};
 }
 function validate(id,q,points){
- const fail=[],soft=[];if(!q||q.xPx==null)return{status:'FAIL',anatomicalScore:0,geometricScore:0,topologicalScore:0,failures:['NO_COORDINATE'],soft:[]};
- const x=q.xPx/IW;const y=q.yPx/IH;const hasPair=!!(points.endocanthionL&&points.endocanthionR);const anchorXs=[points.glabella?.xPx,points.nasion?.xPx,points.subnasale?.xPx,points.labialeSuperius?.xPx,points.stomion?.xPx,points.labialeInferius?.xPx,points.pogonion?.xPx].filter(v=>Number.isFinite(v));const midX=hasPair?((points.endocanthionL.xPx+points.endocanthionR.xPx)/2/IW):(anchorXs.length?anchorXs.reduce((a,b)=>a+b,0)/anchorXs.length/IW:x);const eyeY=hasPair?((points.endocanthionL.yPx+points.endocanthionR.yPx)/2/IH):(points.endocanthionR?.yPx??points.endocanthionL?.yPx??q.yPx)/IH;const dmid=Math.abs(x-midX);
+ const fail=[],soft=[];
+ const x=q.xPx/IW;
+ const y=q.yPx/IH;if(!q||q.xPx==null)return{status:'FAIL',anatomicalScore:0,geometricScore:0,topologicalScore:0,failures:['NO_COORDINATE'],soft:[]};
+ const x=q.xPx/IW;const hasPair=!!(points.endocanthionL&&points.endocanthionR);const anchorXs=[points.glabella?.xPx,points.nasion?.xPx,points.subnasale?.xPx,points.labialeSuperius?.xPx,points.stomion?.xPx,points.labialeInferius?.xPx,points.pogonion?.xPx].filter(v=>Number.isFinite(v));const midX=hasPair?((points.endocanthionL.xPx+points.endocanthionR.xPx)/2/IW):(anchorXs.length?anchorXs.reduce((a,b)=>a+b,0)/anchorXs.length/IW:x);const eyeY=hasPair?((points.endocanthionL.yPx+points.endocanthionR.yPx)/2/IH):(points.endocanthionR?.yPx??points.endocanthionL?.yPx??q.yPx)/IH;const dmid=Math.abs(x-midX);
  const must=(c,code)=>{if(!c)fail.push(code)},warn=(c,code)=>{if(!c)soft.push(code)};
  switch(id){
   case 'trichion':must(y<eyeY+.02,'NOT_SUPERIOR_TO_EYES');warn(dmid<.03,'MIDLINE_WEAK');break;
